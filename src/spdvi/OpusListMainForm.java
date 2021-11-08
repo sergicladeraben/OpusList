@@ -269,7 +269,7 @@ public class OpusListMainForm extends javax.swing.JFrame {
     }
     
     private void Save() {
-        try (Writer wrt = new FileWriter(System.getProperty("user.home") + "\\Documents\\NetBeansProjects\\OpusList\\obres.json")) {
+        try (Writer wrt = new FileWriter(System.getProperty("user.home") + "\\AppData\\Local\\OpusList\\data\\obres.json")) {
             Gson gson = new GsonBuilder().create();
             gson.toJson(obras, wrt);
         } catch (IOException ioe) {
@@ -343,7 +343,7 @@ public class OpusListMainForm extends javax.swing.JFrame {
         Gson gson = new Gson();
         try {
             DefaultListModel<Opus> opusListModel = new DefaultListModel<Opus>();
-            JsonReader reader = new JsonReader(new FileReader(System.getProperty("user.home") + "\\Documents\\NetBeansProjects\\OpusList\\obres.json"));
+            JsonReader reader = new JsonReader(new FileReader(System.getProperty("user.home") + "\\AppData\\Local\\OpusList\\data\\obres.json"));
             obras = gson.fromJson(reader, LIST_OF_OBRA_TYPE);
             for (Opus o: obras) {
                 opusListModel.addElement(o);
