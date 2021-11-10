@@ -15,6 +15,7 @@ public class Opus {
     String format;
     String autor;
     String imatge;
+    String pathAbsolute;
 
     public Opus() {}
     public Opus(String registre, String titol, String any, String format, String autor, String imatge) {
@@ -72,6 +73,14 @@ public class Opus {
 
     public void setImatge(String imatge) {
         this.imatge = imatge;
+    }
+    
+    public String getPathAbsolute() {
+        return pathAbsolute;
+    }
+
+    public void setPathAbsolute(String pathAbsolute) {
+        this.pathAbsolute = pathAbsolute;
     }
 
     @Override

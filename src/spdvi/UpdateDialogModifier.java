@@ -18,7 +18,13 @@ import javax.swing.JFileChooser;
  * @author Roberto
  */
 public class UpdateDialogModifier extends javax.swing.JDialog {
-    private final OpusListMainForm mainForm = (OpusListMainForm) this.getParent();;
+    private final OpusListMainForm mf = (OpusListMainForm) this.getParent();
+    public String userFolder = System.getProperty("user.home");
+    public String imageSource = "\\AppData\\Local\\OpusList\\images\\";
+   
+    String path = "";
+    
+    JFileChooser fileChooser;
     
     /**
      * Creates new form UpdateDialogModifier
@@ -175,66 +181,88 @@ public class UpdateDialogModifier extends javax.swing.JDialog {
     }//GEN-LAST:event_txtAuthorActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+
         try {
-            DefaultListModel<Opus> opusListModel = new DefaultListModel<Opus>();
-                for (Opus o : mainForm.obras) {
-                    if (o.getRegistre().equals(mainForm.registre)) {
-                        o.setRegistre(txtId.getText());
-                        o.setTitol(txtTitle.getText());
-                        o.setAny(txtYear.getText());
-                        o.setFormat(txtFormat.getText());
-                        o.setAutor(txtAuthor.getText());
-                        o.setImatge(mainForm.imageName);
-                    }
-                }
-            for (Opus o: mainForm.obras) {
-                opusListModel.addElement(o);
-            }
-            mainForm.lstOpus.setModel(opusListModel);
-           
-        } catch (Exception e) {
-            e.printStackTrace();
+            path = fileChooser.getSelectedFile().getAbsolutePath();
+            mf.imagePath = fileChooser.getSelectedFile().getName();
+        } catch (NullPointerException npe) {
+            path = "images\\default.jpg";
+            mf.imagePath = "default.jpg";
         }
+
+        try {
+            for (Opus o: mf.obras) {
+                if (o.getRegistre().equals(mf.registre)) {
+                    o.setRegistre(txtId.getText());
+                    o.setTitol(txtTitle.getText());
+                    o.setAny(txtYear.getText());
+                    o.setFormat(txtFormat.getText());
+                    o.setAutor(txtAuthor.getText());
+                    o.setImatge(mf.imagePath);
+                    BufferedImage bufferedImage = ImageIO.read(new File(path));
+                    String outputImageAbsolutePath = userFolder + imageSource + mf.registre + ".jpg";
+                    File outputImage = new File(outputImageAbsolutePath);
+
+                    ImageIO.write(bufferedImage, "jpg", outputImage);
+                }
+                mf.opusListModel.addElement(o);
+            }         
+        
+            mf.lstOpus.setModel(mf.opusListModel);
+            
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+
+        this.setVisible(false);
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImageActionPerformed
-        mainForm.fileChooser = new JFileChooser();
- 
-        int returnOption = mainForm.fileChooser.showOpenDialog(this);
-        if (returnOption == JFileChooser.APPROVE_OPTION) {
-            mainForm.imagePath = mainForm.fileChooser.getSelectedFile().getAbsolutePath();
-            mainForm.imageName = mainForm.fileChooser.getSelectedFile().getName();
-        } else {
-            mainForm.imageName = "default.jpg";
-        }
+
+        fileChooser = new JFileChooser();
+        
+        int returnOption =  fileChooser.showOpenDialog(this);
+
         try {
-            BufferedImage selectedImage = ImageIO.read(new File(mainForm.imagePath));
-            lblImage.setIcon(resizImageIcon(selectedImage));
-        } catch (IOException ioe) {
-            System.err.println("Error en btnImageActionPerformed");
-            System.err.println(ioe);
+            path = fileChooser.getSelectedFile().getAbsolutePath();
+            mf.imagePath = fileChooser.getSelectedFile().getName();
+        } catch (NullPointerException npe) {
+            path = "images\\default.jpg";
+            mf.imagePath = "default.jpg";
+        }
+
+        if(returnOption == JFileChooser.APPROVE_OPTION) {
+            try {
+                BufferedImage buIm = ImageIO.read(new File(path));
+                ImageIcon icon = resizImageIcon(buIm);
+                lblImage.setIcon(icon);
+            } catch(IOException ioe) {
+                ioe.printStackTrace();
+            }
         }
     }//GEN-LAST:event_btnImageActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        for (Opus o : mainForm.obras) {
-                if (o.getRegistre().equals(mainForm.registre)) {
+        txtId.setEnabled(false);
+        
+        try {
+            for (Opus o: mf.obras) {
+                if (o.getRegistre().equals(mf.registre)) {
                     txtId.setText(o.getRegistre());
                     txtTitle.setText(o.getTitol());
                     txtYear.setText(o.getAny());
                     txtFormat.setText(o.getFormat());
                     txtAuthor.setText(o.getAutor());
-                    try {
-                        BufferedImage selectedImage;
-                        if (o.getImatge() != null) {
-                            selectedImage = ImageIO.read(new File("src/images/" + o.getImatge()));
-                            lblImage.setIcon(resizImageIcon(selectedImage));
-                        }
-                    } catch (IOException ioe) {
-                        ioe.printStackTrace();
-                    }
+                    BufferedImage buIm = ImageIO.read(new File(userFolder + imageSource + o.getImatge()));
+                    ImageIcon icon = mf.resizImageIcon(buIm);
+                    lblImage.setIcon(icon);
+                    
+                    path = o.getPathAbsolute();
                 }
             }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
     }//GEN-LAST:event_formWindowOpened
 
     public ImageIcon resizImageIcon(BufferedImage originalImage) {

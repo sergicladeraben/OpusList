@@ -38,10 +38,14 @@ public class OpusListMainForm extends javax.swing.JFrame {
     JList<Opus> lstOpus;
     private static final java.lang.reflect.Type LIST_OF_OBRA_TYPE = new TypeToken<List<Opus>>() {}.getType();
     JFileChooser fileChooser;
-    String imagePath = "src/images/default.jpg";
-    String imageName = null;
+    String imagePath = "";
+    String imageName = "";
     public UpdateDialog ud;
     public String registre;
+    public String userFolder = System.getProperty("user.home");
+    public String ubiData = "\\AppData\\Local\\OpusList\\data\\";
+    public DefaultListModel<Opus> opusListModel;
+
     
     public OpusListMainForm() {
         initComponents();
@@ -342,7 +346,7 @@ public class OpusListMainForm extends javax.swing.JFrame {
     public void loadOpus() {
         Gson gson = new Gson();
         try {
-            DefaultListModel<Opus> opusListModel = new DefaultListModel<Opus>();
+            opusListModel = new DefaultListModel<Opus>();
             JsonReader reader = new JsonReader(new FileReader(System.getProperty("user.home") + "\\AppData\\Local\\OpusList\\data\\obres.json"));
             obras = gson.fromJson(reader, LIST_OF_OBRA_TYPE);
             for (Opus o: obras) {

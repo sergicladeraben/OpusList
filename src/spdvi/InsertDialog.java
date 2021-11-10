@@ -171,6 +171,7 @@ public class InsertDialog extends javax.swing.JDialog {
         }
         Opus obra = new Opus(txtId.getText(), txtTitle.getText(),txtYear.getText(), txtFormat.getText(), txtAuthor.getText(), mainForm.imageName);
         mainForm.obras.add(obra);
+        
         for (Opus o: mainForm.obras) {
             opusListModel.addElement(o);
         }
